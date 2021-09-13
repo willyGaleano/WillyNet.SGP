@@ -15,10 +15,12 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Contexts
     public class DbSGPContext : IdentityDbContext<UserApp>
     {
         private readonly IDateTimeService _dateTime;
-        public DbSGPContext(DbContextOptions options, IDateTimeService dateTime) : base(options)
+        private readonly IAuthenticatedUserService _authenticatedUser;
+        public DbSGPContext(DbContextOptions options, IDateTimeService dateTime, IAuthenticatedUserService authenticatedUser) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             _dateTime = dateTime;
+            _authenticatedUser = authenticatedUser;
         }
 
         public DbSet<Archivo> Archivos {get;set;}
@@ -37,11 +39,11 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Contexts
                 {
                     case EntityState.Added:
                         entry.Entity.Created = _dateTime.NowUtc;
-                        //entry.Entity.CreatedBy = _authenticatedUser.UserId;
+                        entry.Entity.CreatedBy = _authenticatedUser.UserId;
                         break;
                     case EntityState.Modified:
                         entry.Entity.LastModified = _dateTime.NowUtc;
-                        //entry.Entity.LastModifiedBy = _authenticatedUser.UserId;
+                        entry.Entity.LastModifiedBy = _authenticatedUser.UserId;
                         break;
                 }
             }

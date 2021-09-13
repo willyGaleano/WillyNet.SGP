@@ -11,8 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WillyNet.SGP.Core.Application;
+using WillyNet.SGP.Core.Application.Interfaces;
 using WillyNet.SGP.Infraestructure.Persistence;
 using WillyNet.SGP.Infraestructure.Shared;
+using WillyNet.SGP.Presentation.WebApi.Extensions;
+using WillyNet.SGP.Presentation.WebApi.Services;
 
 namespace WillyNet.SGP.Presentation.WebApi
 {
@@ -28,33 +32,33 @@ namespace WillyNet.SGP.Presentation.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddApplicationLayer();
+            services.AddApplicationLayer();
             services.AddSharedInfraestructure(Configuration);
             services.AddPersistenceInfraestructure(Configuration);
-            //services.AddApiVersioningExtension();
+            services.AddApiVersioningExtension();
+            services.AddSwaggerExtension();
+            services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WillyNet.SGP.Presentation.WebApi", Version = "v1" });
-            });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseErrorHandlingMiddleware();
+            /*
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WillyNet.SGP.Presentation.WebApi v1"));
-            }
-
+            }*/
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseSwaggerExtension();
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -15,6 +15,6 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Repository
         public MyRepositoryAsync(DbSGPContext dbSGPContext) : base(dbSGPContext)
         {
             _dbSGPContext = dbSGPContext;
-        }
+        }        
     }
 }

@@ -19,16 +19,6 @@ namespace WillyNet.SGP.Core.Domain.Entities
         public UserApp UserAppSolic { get; set; }
         public ICollection<Archivo> Archivos { get; set; }
         public ICollection<Flujo> Flujos { get; set; }
-        public string IniCodi {
-            get
-            {
-                this._iniCodi = "INI00" + this.IniId.ToString();
-                return this._iniCodi;
-            }
-            set
-            {
-                this._iniCodi = value;
-            }
-        }
+        public string IniCodi { get; set; } = "";
     }
 }
