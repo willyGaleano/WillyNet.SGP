@@ -57,7 +57,8 @@ namespace WillyNet.SGP.Core.Application.Features.Iniciativas.Commands.CreateInic
             {
                 var iniciativaMap = _mapper.Map<Iniciativa>(request);
                 var iniciativa = await _repositoryIniciativa.AddAsync(iniciativaMap);
-                iniciativa.IniCodi = "INI00" + iniciativa.IniId.ToString();
+                
+                iniciativa.IniCodi = "INI00" + iniciativa.IniId.ToString();                
                 await _repositoryIniciativa.UpdateAsync(iniciativa);
 
                 if (!string.IsNullOrEmpty(request.ArchiUbicImg))
@@ -86,17 +87,19 @@ namespace WillyNet.SGP.Core.Application.Features.Iniciativas.Commands.CreateInic
                     }
                 }
 
-                var EstadoRegistrada = await _repositoryEstado
-                                        .GetBySpecAsync(new GetEstadoByNombSpecification("Registrada"));
+                
                 var ModuloEspecialista = await _repositoryModulo
                                         .GetBySpecAsync(new GetIdModuloByNombSpecification("Especialista"));
+                var EstadoRegistrada = await _repositoryEstado
+                                        .GetBySpecAsync(new GetEstadoByNombSpecification("Registrada"));
 
                 var newFlujo = new Flujo
                 {
-                    IniId = iniciativa.IniId,
+                    IniId = iniciativa.IniId,                    
+                    ModuId = ModuloEspecialista.ModuId,
                     EstadId = EstadoRegistrada.EstadId,
-                    ModuId = ModuloEspecialista.ModuId
-                };
+                    FlujoActivo = true
+            };
 
                 await _repositoryFlujo.AddAsync(newFlujo);
                 await _transactionDb.DbContextTransaction.CommitAsync();

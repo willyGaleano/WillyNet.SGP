@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WillyNet.SGP.Infraestructure.Persistence.Contexts;
 
 namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
 {
     [DbContext(typeof(DbSGPContext))]
-    partial class DbSGPContextModelSnapshot : ModelSnapshot
+    [Migration("20210913085751_ValidationIniciativa")]
+    partial class ValidationIniciativa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,12 +296,6 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EstadId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("FlujoActivo")
-                        .HasColumnType("bit");
-
                     b.Property<string>("FlujoEspecific")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
@@ -309,6 +305,9 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
 
                     b.Property<DateTime>("FlujoFecRechaz")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("FlujoPriori")
+                        .HasColumnType("bit");
 
                     b.Property<int>("IniId")
                         .HasColumnType("int");
@@ -323,8 +322,6 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("FlujoId");
-
-                    b.HasIndex("EstadId");
 
                     b.HasIndex("IniId");
 
@@ -352,22 +349,20 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EstadId")
+                        .HasColumnType("int");
+
                     b.Property<string>("IniCodi")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("IniDescrip")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("IniNomb")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<bool>("IniPriori")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -376,7 +371,6 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreaId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserSolicId")
@@ -387,6 +381,8 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                     b.HasIndex("AreaId");
 
                     b.HasIndex("CompId");
+
+                    b.HasIndex("EstadId");
 
                     b.HasIndex("UserCreaId");
 
@@ -568,12 +564,6 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
 
             modelBuilder.Entity("WillyNet.SGP.Core.Domain.Entities.Flujo", b =>
                 {
-                    b.HasOne("WillyNet.SGP.Core.Domain.Entities.Estado", "Estado")
-                        .WithMany("Flujos")
-                        .HasForeignKey("EstadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WillyNet.SGP.Core.Domain.Entities.Iniciativa", "Iniciativa")
                         .WithMany("Flujos")
                         .HasForeignKey("IniId")
@@ -585,8 +575,6 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                         .HasForeignKey("ModuId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Estado");
 
                     b.Navigation("Iniciativa");
 
@@ -607,11 +595,13 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WillyNet.SGP.Core.Domain.Entities.Estado", "Estado")
+                        .WithMany("Iniciativas")
+                        .HasForeignKey("EstadId");
+
                     b.HasOne("WillyNet.SGP.Core.Domain.Entities.UserApp", "UserAppCrea")
                         .WithMany("IniciativasUserCrea")
-                        .HasForeignKey("UserCreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserCreaId");
 
                     b.HasOne("WillyNet.SGP.Core.Domain.Entities.UserApp", "UserAppSolic")
                         .WithMany("IniciativasUserSolic")
@@ -620,6 +610,8 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
                     b.Navigation("Area");
 
                     b.Navigation("Componente");
+
+                    b.Navigation("Estado");
 
                     b.Navigation("UserAppCrea");
 
@@ -638,7 +630,7 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Migrations
 
             modelBuilder.Entity("WillyNet.SGP.Core.Domain.Entities.Estado", b =>
                 {
-                    b.Navigation("Flujos");
+                    b.Navigation("Iniciativas");
                 });
 
             modelBuilder.Entity("WillyNet.SGP.Core.Domain.Entities.Iniciativa", b =>

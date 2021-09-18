@@ -22,6 +22,7 @@ namespace WillyNet.SGP.Presentation.WebApi
 {
     public class Startup
     {
+        readonly string myPolicy = "policyApiSGP";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,7 +30,6 @@ namespace WillyNet.SGP.Presentation.WebApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationLayer();
@@ -38,24 +38,23 @@ namespace WillyNet.SGP.Presentation.WebApi
             services.AddApiVersioningExtension();
             services.AddSwaggerExtension();
             services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
+            services.AddCors(options => options.AddPolicy(myPolicy,
+                             builder => builder.WithOrigins(Configuration["Cors:OriginCors"])
+                                              .AllowAnyHeader()
+                                              .AllowAnyMethod()
+                                              .AllowCredentials()
+                            ));
             services.AddControllers();
             
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseErrorHandlingMiddleware();
-            /*
-            if (env.IsDevelopment())
-            {
-                //app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WillyNet.SGP.Presentation.WebApi v1"));
-            }*/
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseSwaggerExtension();
+            app.UseCors(myPolicy);
             app.UseAuthentication();
             app.UseAuthorization();
             

@@ -9,7 +9,7 @@ namespace WillyNet.SGP.Core.Domain.Entities
         public string FlujoEspecific { get; set; }
         public DateTime FlujoFecAprob { get; set; }
         public DateTime FlujoFecRechaz { get; set; }
-        public bool FlujoPriori { get; set; }
+        public bool FlujoActivo { get; set; }
         public int IniId { get; set; }
         public int ModuId { get; set; }
         public int EstadId { get; set; }

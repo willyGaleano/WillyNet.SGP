@@ -104,17 +104,18 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Contexts
             {
                 entity.HasKey(e => e.FlujoId);
                 entity.ToTable("Flujo");
-                entity.Property(p => p.FlujoEspecific)                    
+                entity.Property(p => p.FlujoEspecific)
+                    .IsRequired(false)
                     .HasMaxLength(150);
-                entity.HasOne(o => o.Estado)
-                    .WithMany(m => m.Flujos)
-                    .HasForeignKey(f => f.EstadId);
                 entity.HasOne(o => o.Modulo)
                     .WithMany(m => m.Flujos)
                     .HasForeignKey(f => f.ModuId);
                 entity.HasOne(o => o.Iniciativa)
                     .WithMany(m => m.Flujos)
                     .HasForeignKey(f => f.IniId);
+                entity.HasOne(o => o.Estado)
+                    .WithMany(m => m.Flujos)
+                    .HasForeignKey(f => f.EstadId);
             });
 
             modelBuilder.Entity<Iniciativa>(entity =>
@@ -122,12 +123,18 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Contexts
                 entity.HasKey(e => e.IniId);
                 entity.ToTable("Iniciativa");
                 entity.Property(p => p.IniNomb)
-                    .HasMaxLength(20);
-                entity.Property(p => p.IniCodi)
                     .IsRequired()
                     .HasMaxLength(20);
+                entity.Property(p => p.IniCodi)
+                    .IsRequired(false)
+                    .HasMaxLength(20);                   ;
                 entity.Property(p => p.IniDescrip)
+                    .IsRequired()
                     .HasMaxLength(150);
+                entity.Property(p => p.UserCreaId)
+                    .IsRequired();
+                entity.Property(p => p.UserSolicId)
+                    .IsRequired(false);
                 entity.HasOne(o => o.Area)
                     .WithMany(m => m.Iniciativas)
                     .HasForeignKey(f => f.AreaId);
@@ -139,7 +146,7 @@ namespace WillyNet.SGP.Infraestructure.Persistence.Contexts
                     .HasForeignKey(f => f.UserCreaId);
                 entity.HasOne(o => o.UserAppSolic)
                     .WithMany(m => m.IniciativasUserSolic)
-                    .HasForeignKey(f => f.UserSolicId);
+                    .HasForeignKey(f => f.UserSolicId);                                      
             });
 
             modelBuilder.Entity<Modulo>(entity =>

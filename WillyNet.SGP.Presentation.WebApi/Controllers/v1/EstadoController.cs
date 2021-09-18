@@ -14,7 +14,6 @@ namespace WillyNet.SGP.Presentation.WebApi.Controllers.v1
     public class EstadoController : BaseApiController
     {
         [HttpGet("GetAllAsync")]
-        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] GetAllEstadosParameters filters)
         {
             return Ok(await Mediator.Send(
@@ -28,7 +27,6 @@ namespace WillyNet.SGP.Presentation.WebApi.Controllers.v1
         }
 
         [HttpPost("CreateAsync")]
-       
         public async Task<IActionResult> Create([FromBody] CreateEstadoCommand command)
         {
             return Ok(await Mediator.Send(command));
